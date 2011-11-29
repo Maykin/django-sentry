@@ -45,6 +45,7 @@ FILTER_KEYS = (
     ('server_name', _('server name')),
     ('logger', _('logger')),
     ('site', _('site')),
+    ('data__context', _('context')),
 )
 
 logger = logging.getLogger('sentry.errors')
@@ -246,6 +247,14 @@ class GroupedMessage(MessageBase):
     @property
     def unique_sites(self):
         return self.messagefiltervalue_set.filter(key='site')\
+                   .values_list('value')\
+                   .annotate(times_seen=Sum('times_seen'))\
+                   .values_list('value', 'times_seen')\
+                   .order_by('-times_seen')
+
+    @property
+    def unique_context(self):
+        return self.messagefiltervalue_set.filter(key='data__context')\
                    .values_list('value')\
                    .annotate(times_seen=Sum('times_seen'))\
                    .values_list('value', 'times_seen')\

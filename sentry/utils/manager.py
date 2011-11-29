@@ -96,6 +96,7 @@ class SentryManager(models.Manager):
         site = kwargs.pop('site', None)
         data = kwargs.pop('data', {}) or {}
         message_id = kwargs.pop('message_id', None)
+        context = data.get('context', None)
 
         if url:
             data['url'] = url
@@ -115,6 +116,8 @@ class SentryManager(models.Manager):
                 kwargs['data']['version'] = data['__sentry__']['version']
             if 'module' in data.get('__sentry__', {}):
                 kwargs['data']['module'] = data['__sentry__']['module']
+
+            kwargs['data']['context'] = context
 
             group_kwargs = kwargs.copy()
             group_kwargs.update({
@@ -188,6 +191,7 @@ class SentryManager(models.Manager):
                     ('server_name', server_name),
                     ('site', site),
                     ('logger', logger_name),
+                    ('data__context', context),
                 ):
                 if not value:
                     continue
