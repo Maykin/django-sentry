@@ -23,6 +23,9 @@ def pprint(value, break_after=10):
 
     value = pformat(value).decode('utf-8', 'replace')
 
+    # Restore newlines
+    value = value.replace("\\n", "\n")
+
     return u'\u200B'.join([value[i:i+break_after] for i in xrange(0, len(value), break_after)])
 
 # seriously Django?
